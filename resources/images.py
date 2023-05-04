@@ -35,6 +35,8 @@ class ImagesList(MethodView):
     @blp.response(201, ImageSchema)
     def post(self, request):
         image_id = uuid.uuid4().hex
+        while ImagesModel.query.get(image_id):
+            image_id = uuid.uuid4().hex
         new_image = ImagesModel(image_id=image_id, **request)
 
         db.session.add(new_image)

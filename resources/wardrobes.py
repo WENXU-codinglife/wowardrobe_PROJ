@@ -59,6 +59,8 @@ class WardrobesList(MethodView):
         if exsiting_wardrobe is not None:
             abort(400, message=f"Wardrobe name {wardrobe_name} already exists!")
         wardrobe_id = uuid.uuid4().hex
+        while WardrobesModel.query.get(wardrobe_id):
+            wardrobe_id = uuid.uuid4().hex 
         new_wardrobe = WardrobesModel(**{
             "wardrobe_name": wardrobe_name, 
             "wardrobe_id": wardrobe_id,

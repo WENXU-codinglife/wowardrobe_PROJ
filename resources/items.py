@@ -52,6 +52,9 @@ class ItemsList(MethodView):
     @blp.response(201, ItemSchema)
     def post(self, request):
         item_id = uuid.uuid4().hex
+        while ItemsModel.query.get(item_id):
+            item_id = uuid.uuid4().hex
+            
         request["item_time"] = datetime.strptime(request["item_time"],'%Y-%m-%d')
         new_item = ItemsModel(item_id=item_id, **request)
 

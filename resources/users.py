@@ -21,6 +21,9 @@ class Users(MethodView):
     @blp.response(201, UserSchema)
     def post(self, request):
         user_id = uuid.uuid4().hex
+        while UsersModel.query.get(user_id):
+            user_id = uuid.uuid4().hex
+
         user_name = request["user_name"]
         user_email = request["user_email"]
         user_password = request["user_password"]
