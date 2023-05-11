@@ -2,11 +2,12 @@ import uuid
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt, jwt_required, decode_token
 from passlib.hash import pbkdf2_sha256
 from schemas import UserSchema
 from models import UsersModel
 from db import db
+from whitelist import WHITELIST
 
 blp = Blueprint("Users", "users", description = "Operations on users")
 
@@ -45,6 +46,9 @@ class UserLogin(MethodView):
 
         if user and pbkdf2_sha256.verify(request["user_password"], user.user_password):
             access_token = create_access_token(identity=user.user_id)
+            jti = decode_token(access_token)["jti"]
+            WHITELIST.add(jti)
+            print(WHITELIST)
             return {"access_token": access_token}, 200
 
         abort(401, message="Invalid credentials.")        
@@ -70,3 +74,11 @@ class User(MethodView):
         db.session.delete(user)
         db.session.commit()
         return  {"message": f"User '{user.user_email}' deleted!"}, 200
+
+@blp.route("/logout")
+class UserLogout(MethodView):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        WHITELIST.remove(jti)
+        return {"message": "Successfully logged out"}, 200

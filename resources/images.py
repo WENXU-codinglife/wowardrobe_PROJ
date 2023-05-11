@@ -1,6 +1,7 @@
 import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from flask_jwt_extended import jwt_required
 from models import ImagesModel
 from schemas import ImageSchema
 from db import db
@@ -12,11 +13,13 @@ blp = Blueprint("Images", "images", description = "Operations on images")
 @blp.route("/image/<string:image_id>")
 class Wardrobe(MethodView):
     # get a wardrobe
+    @jwt_required()
     @blp.response(200, ImageSchema)
     def get(self, image_id):
         image = ImagesModel.query.get_or_404(image_id) # get_or_404 takes primary key as argument
         return image
 
+    @jwt_required()
     def delete(self, image_id):
         image = ImagesModel.query.get_or_404(image_id)
         db.session.delete(image)
@@ -26,11 +29,13 @@ class Wardrobe(MethodView):
 @blp.route("/imagesList")
 class ImagesList(MethodView):
     # get all images 
+    @jwt_required()
     @blp.response(200, ImageSchema(many=True))
     def get(self):
         return ImagesModel.query.all()
 
     # create a new image
+    @jwt_required()
     @blp.arguments(ImageSchema)
     @blp.response(201, ImageSchema)
     def post(self, request):
