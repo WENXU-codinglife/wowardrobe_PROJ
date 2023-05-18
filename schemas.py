@@ -49,6 +49,7 @@ class ImageSchema(PlainImageSchema):
 class WardrobeUpdateSchema(Schema):
     wardrobe_name = fields.String()
     wardrobe_image = fields.String()  
+    wardrobe_description = fields.String()
 
 class ItemUpdateSchema(Schema):
     item_color = fields.String()
