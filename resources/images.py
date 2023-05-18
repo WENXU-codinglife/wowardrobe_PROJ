@@ -11,8 +11,8 @@ blp = Blueprint("Images", "images", description = "Operations on images")
 
 
 @blp.route("/image/<string:image_id>")
-class Wardrobe(MethodView):
-    # get a wardrobe
+class Image(MethodView):
+    # get an image
     @jwt_required()
     @blp.response(200, ImageSchema)
     def get(self, image_id):
@@ -26,24 +26,24 @@ class Wardrobe(MethodView):
         db.session.commit()
         return  {"message": f"Image deleted!"}, 200
 
-@blp.route("/imagesList")
-class ImagesList(MethodView):
+@blp.route("/imagesListAll")
+class ImagesListAll(MethodView):
     # get all images 
     @jwt_required()
     @blp.response(200, ImageSchema(many=True))
     def get(self):
         return ImagesModel.query.all()
 
-    # create a new image
-    @jwt_required()
-    @blp.arguments(ImageSchema)
-    @blp.response(201, ImageSchema)
-    def post(self, request):
-        image_id = uuid.uuid4().hex
-        while ImagesModel.query.get(image_id):
-            image_id = uuid.uuid4().hex
-        new_image = ImagesModel(image_id=image_id, **request)
+    # # create a new image
+    # @jwt_required()
+    # @blp.arguments(ImageSchema)
+    # @blp.response(201, ImageSchema)
+    # def post(self, request):
+    #     image_id = uuid.uuid4().hex
+    #     while ImagesModel.query.get(image_id):
+    #         image_id = uuid.uuid4().hex
+    #     new_image = ImagesModel(image_id=image_id, **request)
 
-        db.session.add(new_image)
-        db.session.commit()
-        return new_image
+    #     db.session.add(new_image)
+    #     db.session.commit()
+    #     return new_image
