@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
 
 from db import db
 from whitelist import WHITELIST
@@ -15,6 +16,7 @@ from resources.images import blp as ImagesBlueprint
 
 def create_app(db_url=None):
     app = Flask(__name__)
+    load_dotenv()
     app.config["PROPAGATE_EXCEPTIONS"] = True
     app.config["API_TITLE"] = "WoWardrobe REST API"
     app.config["API_VERSION"] = "v1"
@@ -75,8 +77,10 @@ def create_app(db_url=None):
             401,
         )
 
-    with app.app_context():
-        db.create_all()
+    # using Flask-Migrate to create our database, so no longer need to 
+    # tell Flask-SQLAlchemy to do it when creating the app
+    # with app.app_context():
+    #     db.create_all()
 
     api.register_blueprint(UsersBlueprint)
     api.register_blueprint(WardrobesBlueprint)
