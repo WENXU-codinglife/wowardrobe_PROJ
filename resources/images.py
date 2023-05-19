@@ -47,3 +47,24 @@ class ImagesListAll(MethodView):
     #     db.session.add(new_image)
     #     db.session.commit()
     #     return new_image
+
+@blp.route("/imagesUpload")
+class ImagesUpload(MethodView):
+    @jwt_required()
+    @blp.arguments(ImageSchema(many=True))
+    @blp.response(201)
+    def post(self, request):
+        new_images = []
+        for img in request:
+            item_id = img["item_id"]
+            url = img["url"]
+            image_id = uuid.uuid4().hex
+            while ImagesModel.query.get(image_id):
+                image_id = uuid.uuid4().hex
+            new_image = ImagesModel(image_id=image_id, item_id=item_id, url=url)
+            db.session.add(new_image) 
+            new_images.append({
+                "image_url": url
+            })                
+        db.session.commit()
+        return new_images
