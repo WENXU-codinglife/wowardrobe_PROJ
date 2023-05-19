@@ -40,7 +40,7 @@ class WardrobeSchema(PlainWardrobeSchema):
 class ItemSchema(PlainItemSchema):
     wardrobe_id = fields.String(required=True, load_only=True)
     wardrobe = fields.Nested(PlainWardrobeSchema(), dump_only=True)
-    images = fields.Nested(PlainImageSchema(), dump_only=True)
+    images = fields.List(fields.Nested(PlainImageSchema()), dump_only=True)
 
 class ImageSchema(PlainImageSchema):
     item_id = fields.String(required=True, load_only=True)
