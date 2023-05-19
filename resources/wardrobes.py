@@ -38,6 +38,7 @@ class Wardrobe(MethodView):
 
         wardrobe.wardrobe_name = request["wardrobe_name"]
         wardrobe.wardrobe_image = request["wardrobe_image"]
+        wardrobe.wardrobe_description = request["wardrobe_description"]
 
         db.session.add(wardrobe)
         db.session.commit()
@@ -59,6 +60,7 @@ class WardrobesList(MethodView):
     def post(self, request):
         wardrobe_name = request["wardrobe_name"]
         wardrobe_image = request["wardrobe_image"]
+        wardrobe_description = request["wardrobe_description"]
         user_id = request["user_id"]
         exsiting_wardrobe = WardrobesModel.query.filter_by(user_id=user_id, wardrobe_name=wardrobe_name).first()
         if exsiting_wardrobe is not None:
@@ -70,7 +72,8 @@ class WardrobesList(MethodView):
             "wardrobe_name": wardrobe_name, 
             "wardrobe_id": wardrobe_id,
             "user_id": user_id,
-            "wardrobe_image": wardrobe_image
+            "wardrobe_image": wardrobe_image,
+            "wardrobe_description": wardrobe_description
         })
         
         db.session.add(new_wardrobe)

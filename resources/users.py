@@ -1,5 +1,5 @@
 import uuid
-from flask import request
+from flask import render_template
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import create_access_token, get_jwt, jwt_required, decode_token
@@ -10,6 +10,12 @@ from db import db
 from whitelist import WHITELIST
 
 blp = Blueprint("Users", "users", description = "Operations on users")
+
+@blp.route("/")
+class index(MethodView):
+    def get(self):
+        return render_template('wakingPage.html')
+        
 
 @blp.route("/register")
 class UserRegister(MethodView):

@@ -13,6 +13,7 @@ class PlainWardrobeSchema(Schema):
     wardrobe_id = fields.String(dump_only=True)
     wardrobe_name = fields.String(required=True)
     wardrobe_image = fields.String(required=False)
+    wardrobe_description = fields.String(required=False)
 
 class PlainItemSchema(Schema):
     item_id = fields.String(dump_only=True)
