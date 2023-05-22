@@ -48,7 +48,6 @@ class Wardrobe(MethodView):
 @blp.route("/wardrobesList")
 class WardrobesList(MethodView):
     # get all wardrobes 
-    @jwt_required()
     @blp.response(200, WardrobeSchema(many=True))
     def get(self):
         return WardrobesModel.query.all()

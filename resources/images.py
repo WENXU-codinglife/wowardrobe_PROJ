@@ -29,7 +29,6 @@ class Image(MethodView):
 @blp.route("/imagesListAll")
 class ImagesListAll(MethodView):
     # get all images 
-    @jwt_required()
     @blp.response(200, ImageSchema(many=True))
     def get(self):
         return ImagesModel.query.all()
@@ -64,7 +63,8 @@ class ImagesUpload(MethodView):
             new_image = ImagesModel(image_id=image_id, item_id=item_id, url=url)
             db.session.add(new_image) 
             new_images.append({
-                "image_url": url
+                "image_url": url,
+                "image_id": image_id,
             })                
         db.session.commit()
         return new_images
