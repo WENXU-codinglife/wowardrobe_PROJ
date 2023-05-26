@@ -26,29 +26,14 @@ class Image(MethodView):
         db.session.commit()
         return  {"message": f"Image deleted!"}, 200
 
-@blp.route("/imagesListAll")
-class ImagesListAll(MethodView):
+@blp.route("/imagesList")
+class ImagesList(MethodView):
     # get all images 
     @blp.response(200, ImageSchema(many=True))
     def get(self):
         return ImagesModel.query.all()
 
-    # # create a new image
-    # @jwt_required()
-    # @blp.arguments(ImageSchema)
-    # @blp.response(201, ImageSchema)
-    # def post(self, request):
-    #     image_id = uuid.uuid4().hex
-    #     while ImagesModel.query.get(image_id):
-    #         image_id = uuid.uuid4().hex
-    #     new_image = ImagesModel(image_id=image_id, **request)
 
-    #     db.session.add(new_image)
-    #     db.session.commit()
-    #     return new_image
-
-@blp.route("/imagesUpload")
-class ImagesUpload(MethodView):
     @jwt_required()
     @blp.arguments(ImageSchema(many=True))
     @blp.response(201)

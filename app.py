@@ -1,9 +1,9 @@
 import os
-from tarfile import BLOCKSIZE
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from flask_cors import  CORS
 from dotenv import load_dotenv
 
 from db import db
@@ -17,6 +17,7 @@ from resources.images import blp as ImagesBlueprint
 
 def create_app(db_url=None):
     app = Flask(__name__)
+    CORS(app)
     load_dotenv()
     app.config["PROPAGATE_EXCEPTIONS"] = True
     app.config["API_TITLE"] = "WoWardrobe REST API"
