@@ -3,6 +3,7 @@ from flask import render_template
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import create_access_token, get_jwt, jwt_required, decode_token
+from sqlalchemy.exc import SQLAlchemyError
 from passlib.hash import pbkdf2_sha256
 from schemas import UserSchema
 from models import UsersModel
@@ -38,8 +39,13 @@ class UserRegister(MethodView):
             "user_email": user_email,
             "user_password": pbkdf2_sha256.hash(user_password)
         })
-        db.session.add(new_user)
-        db.session.commit()
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+        except SQLAlchemyError:
+             abort(500, message="An error occurred creating the store.")
+            
         return new_user
 
 @blp.route("/login")
@@ -77,8 +83,13 @@ class User(MethodView):
 
     def delete(self, user_id):
         user = UsersModel.query.get_or_404(user_id)
-        db.session.delete(user)
-        db.session.commit()
+        
+        try:
+            db.session.delete(user)
+            db.session.commit()
+        except SQLAlchemyError:
+             abort(500, message="An error occurred creating the store.")
+
         return  {"message": f"User '{user.user_email}' deleted!"}, 200
 
 @blp.route("/logout")

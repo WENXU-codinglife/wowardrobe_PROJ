@@ -2,6 +2,7 @@ import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required
+from sqlalchemy.exc import SQLAlchemyError
 from models import ImagesModel
 from schemas import ImageSchema
 from db import db
@@ -22,8 +23,13 @@ class Image(MethodView):
     @jwt_required()
     def delete(self, image_id):
         image = ImagesModel.query.get_or_404(image_id)
-        db.session.delete(image)
-        db.session.commit()
+
+        try:
+            db.session.delete(image)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="An error occurred creating the store.")
+
         return  {"message": f"Image deleted!"}, 200
 
 @blp.route("/imagesList")
@@ -50,6 +56,10 @@ class ImagesList(MethodView):
             new_images.append({
                 "image_url": url,
                 "image_id": image_id,
-            })                
-        db.session.commit()
+            })           
+
+        try:     
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="An error occurred creating the store.")     
         return new_images

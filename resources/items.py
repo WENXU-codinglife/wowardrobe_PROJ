@@ -1,7 +1,7 @@
-from multiprocessing.spawn import import_main_path
 import uuid
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import SQLAlchemyError
 from models import ItemsModel
 from schemas import ItemSchema, ItemUpdateSchema
 from flask_jwt_extended import jwt_required
@@ -23,8 +23,13 @@ class Item(MethodView):
 
     def delete(self, item_id):
         item = ItemsModel.query.get_or_404(item_id)
-        db.session.delete(item)
-        db.session.commit()
+
+        try:
+            db.session.delete(item)
+            db.session.commit()
+        except SQLAlchemyError:
+             abort(500, message="An error occurred creating the store.")
+
         return  {"message": f"Item deleted!"}, 200
     
     @jwt_required()
@@ -39,8 +44,12 @@ class Item(MethodView):
         item.item_time = datetime.strptime(request["item_time"],'%Y-%m-%d')
         item.item_season = request["item_season"]
         item.wardrobe_id = request["wardrobe_id"]
-        db.session.add(item)
-        db.session.commit()
+
+        try:
+            db.session.delete(item)
+            db.session.commit()
+        except SQLAlchemyError:
+             abort(500, message="An error occurred creating the store.")
 
         return item
 
@@ -63,6 +72,10 @@ class ItemsList(MethodView):
         request["item_time"] = datetime.strptime(request["item_time"],'%Y-%m-%d')
         new_item = ItemsModel(item_id=item_id, **request)
 
-        db.session.add(new_item)
-        db.session.commit()
+        try:
+            db.session.add(new_item)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="An error occurred creating the store.")
+            
         return new_item

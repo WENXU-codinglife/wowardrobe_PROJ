@@ -40,8 +40,11 @@ class Wardrobe(MethodView):
         wardrobe.wardrobe_image = request["wardrobe_image"]
         wardrobe.wardrobe_description = request["wardrobe_description"]
 
-        db.session.add(wardrobe)
-        db.session.commit()
+        try:
+            db.session.add(wardrobe)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="An error occurred creating the store.")
 
         return wardrobe
 
@@ -75,6 +78,10 @@ class WardrobesList(MethodView):
             "wardrobe_description": wardrobe_description
         })
         
-        db.session.add(new_wardrobe)
-        db.session.commit()
+        try:
+            db.session.add(new_wardrobe)
+            db.session.commit()
+        except SQLAlchemyError:
+            abort(500, message="An error occurred creating the store.")
+
         return new_wardrobe
