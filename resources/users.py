@@ -27,7 +27,7 @@ class UserRegister(MethodView):
         user_name = request["user_name"]
         user_password = request["user_password"]
         if UsersModel.query.filter_by(user_email = user_email).first():
-            abort(409, message="A user with that username already exists.")
+            abort(409, message="A user with that email already exists.")
 
         user_id = uuid.uuid4().hex
         while UsersModel.query.get(user_id):
@@ -60,7 +60,7 @@ class UserLogin(MethodView):
             access_token = create_access_token(identity=user.user_id)
             jti = decode_token(access_token)["jti"]
             WHITELIST.add(jti)
-            print(WHITELIST)
+            # print(WHITELIST)
             return {"access_token": access_token}, 200
 
         abort(401, message="Invalid credentials.")        

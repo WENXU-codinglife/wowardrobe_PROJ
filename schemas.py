@@ -6,7 +6,7 @@ from models import wardrobe
 class PlainUserSchema(Schema):
     user_id = fields.String(dump_only=True)
     user_name = fields.String()
-    user_email = fields.String(required=True, unique=True)
+    user_email = fields.String(required=True, metadata={'unique': True})
     user_password = fields.String(required=True, load_only=True)
 
 class PlainWardrobeSchema(Schema):
